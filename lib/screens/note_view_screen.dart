@@ -12,6 +12,7 @@ class NoteViewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(note.backgroundColor),
       appBar: AppBar(
         title: Text(
           note.title.isEmpty ? 'Ghi chú' : note.title,

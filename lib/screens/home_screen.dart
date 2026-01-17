@@ -3,6 +3,7 @@ import '../database/database_helper.dart';
 import '../models/note.dart';
 import '../widgets/note_card.dart';
 import 'note_detail_screen.dart';
+import 'statistics_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -148,6 +149,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     _filteredNotes = _notes;
                   }
                 });
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.bar_chart),
+              tooltip: 'Thống kê',
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const StatisticsScreen(),
+                  ),
+                );
               },
             ),
             IconButton(

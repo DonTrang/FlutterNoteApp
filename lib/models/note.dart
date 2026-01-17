@@ -6,6 +6,7 @@ class Note {
   final DateTime updatedAt;
   final bool isPinned;
   final bool isDeleted;
+  final int backgroundColor; // Lưu màu dưới dạng int (Color.value)
 
   Note({
     this.id,
@@ -15,6 +16,7 @@ class Note {
     required this.updatedAt,
     this.isPinned = false,
     this.isDeleted = false,
+    this.backgroundColor = 0xFFFFFFFF, // Mặc định là màu trắng
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +28,7 @@ class Note {
       'updatedAt': updatedAt.toIso8601String(),
       'isPinned': isPinned ? 1 : 0,
       'isDeleted': isDeleted ? 1 : 0,
+      'backgroundColor': backgroundColor,
     };
   }
 
@@ -38,6 +41,7 @@ class Note {
       updatedAt: DateTime.parse(map['updatedAt'] as String),
       isPinned: (map['isPinned'] ?? 0) == 1,
       isDeleted: (map['isDeleted'] ?? 0) == 1,
+      backgroundColor: map['backgroundColor'] as int? ?? 0xFFFFFFFF,
     );
   }
 
@@ -49,6 +53,7 @@ class Note {
     DateTime? updatedAt,
     bool? isPinned,
     bool? isDeleted,
+    int? backgroundColor,
   }) {
     return Note(
       id: id ?? this.id,
@@ -58,6 +63,7 @@ class Note {
       updatedAt: updatedAt ?? this.updatedAt,
       isPinned: isPinned ?? this.isPinned,
       isDeleted: isDeleted ?? this.isDeleted,
+      backgroundColor: backgroundColor ?? this.backgroundColor,
     );
   }
 }

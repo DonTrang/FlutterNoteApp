@@ -21,7 +21,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -36,7 +36,8 @@ class DatabaseHelper {
         createdAt TEXT NOT NULL,
         updatedAt TEXT NOT NULL,
         isPinned INTEGER NOT NULL DEFAULT 0,
-        isDeleted INTEGER NOT NULL DEFAULT 0
+        isDeleted INTEGER NOT NULL DEFAULT 0,
+        backgroundColor INTEGER NOT NULL DEFAULT 4294967295
       )
     ''');
   }
@@ -48,6 +49,11 @@ class DatabaseHelper {
       );
       await db.execute(
         'ALTER TABLE notes ADD COLUMN isDeleted INTEGER NOT NULL DEFAULT 0',
+      );
+    }
+    if (oldVersion < 3) {
+      await db.execute(
+        'ALTER TABLE notes ADD COLUMN backgroundColor INTEGER NOT NULL DEFAULT 4294967295',
       );
     }
   }
@@ -174,6 +180,38 @@ class DatabaseHelper {
       where: 'id = ?',
       whereArgs: [note.id],
     );
+  }
+
+  Future<Map<String, dynamic>> getStatistics() async {
+    final db = await database;
+    final allNotes = await db.query('notes', where: 'isDeleted = 0');
+
+    int totalNotes = allNotes.length;
+    int totalWords = 0;
+    int totalCharacters = 0;
+    int pinnedNotes = 0;
+
+    for (final noteMap in allNotes) {
+      final content = noteMap['content'] as String? ?? '';
+      final title = noteMap['title'] as String? ?? '';
+      final fullText = '$title $content';
+
+      totalCharacters += fullText.length;
+      totalWords += fullText.trim().isEmpty
+          ? 0
+          : fullText.trim().split(RegExp(r'\s+')).length;
+
+      if ((noteMap['isPinned'] ?? 0) == 1) {
+        pinnedNotes++;
+      }
+    }
+
+    return {
+      'totalNotes': totalNotes,
+      'totalWords': totalWords,
+      'totalCharacters': totalCharacters,
+      'pinnedNotes': pinnedNotes,
+    };
   }
 
   Future<void> close() async {
